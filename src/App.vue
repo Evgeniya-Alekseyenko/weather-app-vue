@@ -1,30 +1,33 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav>
-  <router-view/>
+    <div>
+        <h1>Погода в {{ city }}</h1>
+        <p>Температура: {{ temperature }} °C</p>
+        <p>Описание: {{ description }}</p>
+    </div>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+import weatherApi from './api/weatherApi';
 
-nav {
-  padding: 30px;
-}
-
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-nav a.router-link-exact-active {
-  color: #42b983;
-}
-</style>
+export default {
+    data() {
+        return {
+            city: 'London',
+            temperature: null,
+            description: null,
+        };
+    },
+    async mounted() {
+        try {
+            const city = this.city;
+            const response = await weatherApi.get('weather', {
+                params: { q: city },
+            });
+            this.temperature = Math.round(response.data.main.temp);
+            this.description = response.data.weather[0].description;
+        } catch (error) {
+            console.error('Ошибка при получении данных о погоде', error);
+        }
+    },
+};
+</script>
