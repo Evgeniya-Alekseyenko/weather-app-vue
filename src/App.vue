@@ -1,25 +1,26 @@
 <template>
     <div class="container">
-        <div class="tabs">
-            <router-link to="/" class="tab-link">Home</router-link>
-            <router-link to="/favorites" class="tab-link"
-                >Favorites</router-link
-            >
-        </div>
+        <ul class="menu-main">
+            <li><router-link to="/">Home</router-link></li>
+            <li>
+                <router-link to="/favorites">Favorites</router-link>
+            </li>
+        </ul>
         <router-view></router-view>
-        <h1>Погода в {{ city }}</h1>
-        <p>Температура: {{ temperature }} °C</p>
-        <p>Описание: {{ description }}</p>
     </div>
 </template>
 
 <script>
-import weatherApi from './api/weatherApi';
+import { weatherApi } from './api/weatherApi';
+import WeatherInput from '@/components/WeatherInput';
 
 export default {
+    components: {
+        WeatherInput,
+    },
     data() {
         return {
-            city: 'London',
+            city: 'Kiev',
             temperature: null,
             description: null,
         };
@@ -33,62 +34,96 @@ export default {
             this.temperature = Math.round(response.data.main.temp);
             this.description = response.data.weather[0].description;
         } catch (error) {
-            console.error('Ошибка при получении данных о погоде', error);
+            console.error('Error getting weather data', error);
         }
     },
 };
 </script>
 
 <style>
+@import url('https://fonts.googleapis.com/css?family=Ubuntu+Condensed');
+
+* {
+    font-family: 'Ubuntu Condensed', sans-serif;
+}
 .container {
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
 }
 
 /* tabs */
-.tabs {
-    /* max-width: 90%; */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #f0f0f0;
-    border-bottom: 1px solid #ccc;
+.menu-main {
+    list-style: none;
+    margin: 40px 0 5px;
+    padding: 25px 0 5px;
+    text-align: center;
+    background: white;
 }
-
-.tab-link {
-    padding: 10px 20px;
+.menu-main li {
+    display: inline-block;
+}
+.menu-main li:after {
+    content: '|';
+    color: #606060;
+    display: inline-block;
+    vertical-align: top;
+}
+.menu-main li:last-child:after {
+    content: none;
+}
+.menu-main a {
     text-decoration: none;
-    color: #333;
-    font-weight: bold;
-    transition: background-color 0.2s ease;
+    letter-spacing: 2px;
+    position: relative;
+    padding-bottom: 20px;
+    margin: 0 34px 0 30px;
+    font-size: 17px;
+    text-transform: uppercase;
+    display: inline-block;
+    transition: color 0.2s;
 }
-
-.tab-link.active {
-    background-color: #ccc;
+.menu-main a,
+.menu-main a:visited {
+    color: #9d999d;
 }
-
-.tab-link:hover {
-    background-color: #ddd;
+.menu-main a.current,
+.menu-main a:hover {
+    color: #feb386;
 }
-
-/* media queries */
-@media (max-width: 768px) {
-    .container {
-        max-width: 90%;
-        padding: 10px;
+.menu-main a:before,
+.menu-main a:after {
+    content: '';
+    position: absolute;
+    height: 4px;
+    top: auto;
+    right: 50%;
+    bottom: -5px;
+    left: 50%;
+    background: #feb386;
+    transition: 0.8s;
+}
+.menu-main a:hover:before,
+.menu-main .current:before {
+    left: 0;
+}
+.menu-main a:hover:after,
+.menu-main .current:after {
+    right: 0;
+}
+@media (max-width: 450px) {
+    .menu-main {
+        padding-top: 0;
     }
-}
-
-@media (max-width: 360px) {
-    .container {
-        max-width: 100%;
-        padding: 5px;
+    .menu-main li {
+        display: block;
     }
-
-    .tabs {
-        padding: 5px;
+    .menu-main li:after {
+        content: none;
+    }
+    .menu-main a {
+        padding: 25px 0 20px;
+        margin: 0 30px;
     }
 }
 </style>

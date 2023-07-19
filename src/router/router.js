@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
-import Home from '../pages/Home.vue';
-import Favorites from '../pages/Favorites.vue';
+import Home from '@/pages/Home.vue';
+import Favorites from '@/pages/Favorites.vue';
 
 const routes = [
     {
