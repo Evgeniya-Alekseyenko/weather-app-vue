@@ -10,6 +10,7 @@
                 :temperature="temperature"
                 :humidity="humidity"
                 :description="description"
+                :date="date"
             />
         </div>
     </div>
@@ -31,6 +32,7 @@ export default {
             temperature: null,
             humidity: null,
             description: null,
+            date: null,
         };
     },
     methods: {
@@ -40,6 +42,7 @@ export default {
                 this.temperature = null;
                 this.humidity = null;
                 this.description = null;
+                this.date = null;
             } else {
                 await this.updateWeather();
             }
@@ -52,10 +55,12 @@ export default {
                 this.temperature = Math.round(response.data.main.temp);
                 this.humidity = response.data.main.humidity;
                 this.description = response.data.weather[0].description;
+                this.date = new Date(response.data.dt * 1000);
             } catch (error) {
                 this.temperature = null;
                 this.humidity = null;
                 this.description = null;
+                this.date = null;
             }
         },
     },

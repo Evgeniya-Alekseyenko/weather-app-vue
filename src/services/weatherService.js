@@ -9,7 +9,10 @@ export async function updateWeather(city) {
         const temperature = Math.round(response.data.main.temp);
         const humidity = response.data.main.humidity;
         const description = response.data.weather[0].description;
-        return { temperature, humidity, description };
+        const date = response.data.dt
+            ? new Date(response.data.dt * 1000)
+            : null;
+        return { temperature, humidity, description, date };
     } catch (error) {
         if (error.response && error.response.status === 404) {
             console.error('City not found:', city);
@@ -40,8 +43,10 @@ export async function updateForecast(city) {
         });
 
         const weeklyForecast = filteredForecasts.map((forecast) => {
+            const date = new Date(forecast.dt * 1000);
+            const formattedDate = formatDate(date);
             return {
-                date: forecast.dt_txt,
+                date: formattedDate,
                 temperature: Math.round(forecast.main.temp),
                 humidity: forecast.main.humidity,
                 description: forecast.weather[0].description,
@@ -58,4 +63,24 @@ export async function updateForecast(city) {
             throw error;
         }
     }
+}
+
+function formatDate(date) {
+    const months = [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December',
+    ];
+    const month = months[date.getMonth()];
+    const dayOfMonth = date.getDate();
+    return `${month} ${dayOfMonth}`;
 }

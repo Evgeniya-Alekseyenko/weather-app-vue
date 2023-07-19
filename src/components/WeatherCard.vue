@@ -13,21 +13,29 @@
             Week
         </button>
     </div>
-    <h2>{{ city }}</h2>
+    <h2 class="city-name">{{ city }}</h2>
 
     <div v-if="activeTab === 'day'">
-        <div v-if="temperature !== null && city !== ''">
+        <div
+            v-if="temperature !== null && city !== ''"
+            class="forecast-item dayly"
+        >
+            <h3>{{ formatDate(date) }}</h3>
             <p v-if="temperature !== null">Temperature: {{ temperature }} °C</p>
             <p v-if="humidity">Humidity: {{ humidity }}%</p>
             <p v-if="description">Description: {{ description }}</p>
         </div>
         <div v-else>
-            <p>City not found: {{ city }}</p>
+            <p class="forecast-item-info">City not found</p>
         </div>
     </div>
     <div v-if="activeTab === 'week'">
-        <div v-if="weeklyForecast.length > 0">
-            <div v-for="forecast in weeklyForecast" :key="forecast.date">
+        <div v-if="weeklyForecast.length > 0" class="forcast-weekly">
+            <div
+                v-for="forecast in weeklyForecast"
+                :key="forecast.date"
+                class="forecast-item"
+            >
                 <h3>{{ forecast.date }}</h3>
                 <p>Temperature: {{ forecast.temperature }} °C</p>
                 <p>Humidity: {{ forecast.humidity }}%</p>
@@ -35,7 +43,7 @@
             </div>
         </div>
         <div v-else>
-            <p>No weekly forecast available.</p>
+            <p class="forecast-item-info">No weekly forecast available.</p>
         </div>
     </div>
 </template>
@@ -52,6 +60,7 @@ export default {
         temperature: Number,
         humidity: Number,
         description: String,
+        date: Date,
     },
     data() {
         return {
@@ -91,6 +100,18 @@ export default {
         toggleTab(tab) {
             this.activeTab = tab;
         },
+        formatDate(date) {
+            if (date) {
+                const options = {
+                    weekday: 'long',
+                    month: 'long',
+                    day: 'numeric',
+                };
+                return date.toLocaleDateString(undefined, options);
+            } else {
+                return '';
+            }
+        },
     },
 };
 </script>
@@ -120,8 +141,55 @@ export default {
     background: rgba(254, 179, 134, 0.8);
     color: #fff;
 }
+
 .tabs button:hover {
     background: rgba(254, 179, 134, 1);
     box-shadow: 0 0 9px rgba(254, 179, 134, 0.7);
+}
+
+.city-name {
+    text-align: center;
+    text-transform: uppercase;
+    color: #feb386;
+}
+
+.forecast-item {
+    outline: none;
+    border-color: #feb386;
+    box-shadow: 0 0 9px rgba(254, 179, 134, 0.7);
+    padding: 5px 15px;
+    flex-basis: 300px;
+    margin: 10px;
+}
+
+.dayly {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.forcast-weekly {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.forecast-item-info {
+    text-align: center;
+    font-size: 22px;
+}
+
+@media (max-width: 768px) {
+    .forcast-weekly .forecast-item {
+        width: calc(50% - 10px);
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 400px) {
+    .forcast-weekly .forecast-item {
+        width: 100%;
+    }
 }
 </style>
