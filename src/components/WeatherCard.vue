@@ -24,6 +24,7 @@
             <p v-if="temperature !== null">Temperature: {{ temperature }} °C</p>
             <p v-if="humidity">Humidity: {{ humidity }}%</p>
             <p v-if="description">Description: {{ description }}</p>
+            <WeatherIcon :icon="icon" />
         </div>
         <div v-else>
             <p class="forecast-item-info">City not found</p>
@@ -35,11 +36,14 @@
                 v-for="forecast in weeklyForecast"
                 :key="forecast.date"
                 class="forecast-item"
+                @mouseover="hoverCard"
+                @mouseleave="unhoverCard"
             >
                 <h3>{{ forecast.date }}</h3>
                 <p>Temperature: {{ forecast.temperature }} °C</p>
                 <p>Humidity: {{ forecast.humidity }}%</p>
                 <p>Description: {{ forecast.description }}</p>
+                <WeatherIcon :icon="icon" />
             </div>
         </div>
         <div v-else>
@@ -50,8 +54,12 @@
 
 <script>
 import { updateWeather, updateForecast } from '@/services/weatherService';
+import WeatherIcon from '@/components/WeatherIcon.vue';
 
 export default {
+    components: {
+        WeatherIcon,
+    },
     props: {
         city: {
             type: String,
@@ -61,6 +69,7 @@ export default {
         humidity: Number,
         description: String,
         date: Date,
+        icon: String,
     },
     data() {
         return {
@@ -156,10 +165,17 @@ export default {
 .forecast-item {
     outline: none;
     border-color: #feb386;
+    border-radius: 5px;
     box-shadow: 0 0 9px rgba(254, 179, 134, 0.7);
     padding: 5px 15px;
     flex-basis: 300px;
     margin: 10px;
+    text-align: center;
+    font-size: 18px;
+    letter-spacing: 2px;
+    background: rgba(254, 179, 134, 0.8);
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    color: #fff;
 }
 
 .dayly {
@@ -178,6 +194,21 @@ export default {
 .forecast-item-info {
     text-align: center;
     font-size: 22px;
+}
+
+.forecast-item:hover {
+    background-color: rgba(254, 179, 134, 0.6);
+    transform: translateY(-5px);
+    color: #000;
+}
+
+.forcast-weekly .forecast-item {
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.forcast-weekly .forecast-item.hovered-card {
+    background-color: rgba(254, 179, 134, 0.6);
+    transform: translateY(-5px);
 }
 
 @media (max-width: 768px) {

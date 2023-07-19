@@ -9,10 +9,11 @@ export async function updateWeather(city) {
         const temperature = Math.round(response.data.main.temp);
         const humidity = response.data.main.humidity;
         const description = response.data.weather[0].description;
+        const icon = response.data.weather[0].icon;
         const date = response.data.dt
             ? new Date(response.data.dt * 1000)
             : null;
-        return { temperature, humidity, description, date };
+        return { temperature, humidity, description, icon, date };
     } catch (error) {
         if (error.response && error.response.status === 404) {
             console.error('City not found:', city);

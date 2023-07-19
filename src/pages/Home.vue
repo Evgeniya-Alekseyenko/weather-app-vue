@@ -11,6 +11,7 @@
                 :humidity="humidity"
                 :description="description"
                 :date="date"
+                :icon="icon"
             />
         </div>
     </div>
@@ -33,6 +34,7 @@ export default {
             humidity: null,
             description: null,
             date: null,
+            icon: null,
         };
     },
     methods: {
@@ -43,6 +45,7 @@ export default {
                 this.humidity = null;
                 this.description = null;
                 this.date = null;
+                this.icon = null;
             } else {
                 await this.updateWeather();
             }
@@ -56,11 +59,13 @@ export default {
                 this.humidity = response.data.main.humidity;
                 this.description = response.data.weather[0].description;
                 this.date = new Date(response.data.dt * 1000);
+                this.icon = response.data.weather[0].icon;
             } catch (error) {
                 this.temperature = null;
                 this.humidity = null;
                 this.description = null;
                 this.date = null;
+                this.icon = null;
             }
         },
     },
