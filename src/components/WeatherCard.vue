@@ -22,6 +22,9 @@
         >
             <h3>{{ formatDate(date) }}</h3>
             <p v-if="temperature !== null">Temperature: {{ temperature }} °C</p>
+            <p v-if="temperatureMin !== null">
+                Min: {{ temperatureMin }} °C | Max: {{ temperatureMax }} °C
+            </p>
             <p v-if="humidity">Humidity: {{ humidity }}%</p>
             <p v-if="description">Description: {{ description }}</p>
             <WeatherIcon :icon="icon" />
@@ -43,7 +46,7 @@
                 <p>Temperature: {{ forecast.temperature }} °C</p>
                 <p>Humidity: {{ forecast.humidity }}%</p>
                 <p>Description: {{ forecast.description }}</p>
-                <WeatherIcon :icon="icon" />
+                <WeatherIcon :icon="forecast.icon" />
             </div>
         </div>
         <div v-else>
@@ -66,6 +69,8 @@ export default {
             default: '',
         },
         temperature: Number,
+        temperatureMin: Number,
+        temperatureMax: Number,
         humidity: Number,
         description: String,
         date: Date,
@@ -75,6 +80,8 @@ export default {
         return {
             activeTab: 'day',
             localTemperature: this.temperature,
+            localTemperatureMin: this.temperatureMin,
+            localTemperatureMax: this.temperatureMax,
             localHumidity: this.humidity,
             localDescription: this.description,
             weeklyForecast: [],
@@ -84,6 +91,8 @@ export default {
         async city(newCity) {
             if (newCity === '') {
                 this.localTemperature = null;
+                this.localTemperatureMin = null;
+                this.localTemperatureMax = null;
                 this.localHumidity = null;
                 this.localDescription = null;
                 this.weeklyForecast = [];
@@ -91,14 +100,22 @@ export default {
                 const weatherData = await updateWeather(newCity);
                 if (weatherData === null) {
                     this.localTemperature = null;
+                    this.localTemperatureMin = null;
+                    this.localTemperatureMax = null;
                     this.localHumidity = null;
                     this.localDescription = null;
                     this.weeklyForecast = [];
                 } else {
                     this.localTemperature = weatherData.temperature;
+                    this.localTemperatureMin = weatherData.temperatureMin;
+                    this.localTemperatureMax = weatherData.temperatureMax;
+
                     this.localHumidity = weatherData.humidity;
                     this.localDescription = weatherData.description;
-                    const weeklyForecast = await updateForecast(newCity);
+                    const weeklyForecast = await updateForecast(
+                        newCity,
+                        weatherData
+                    );
                     this.weeklyForecast = weeklyForecast;
                 }
             }
@@ -188,7 +205,7 @@ export default {
     flex-direction: row;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
 }
 
 .forecast-item-info {

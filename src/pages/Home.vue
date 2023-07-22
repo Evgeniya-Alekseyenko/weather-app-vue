@@ -8,6 +8,8 @@
             <WeatherCard
                 :city="currentCity"
                 :temperature="temperature"
+                :temperatureMin="temperatureMin"
+                :temperatureMax="temperatureMax"
                 :humidity="humidity"
                 :description="description"
                 :date="date"
@@ -31,6 +33,8 @@ export default {
         return {
             currentCity: '',
             temperature: null,
+            temperatureMin: null,
+            temperatureMax: null,
             humidity: null,
             description: null,
             date: null,
@@ -42,6 +46,8 @@ export default {
             this.currentCity = city;
             if (city === '') {
                 this.temperature = null;
+                this.temperatureMin = null;
+                this.temperatureMax = null;
                 this.humidity = null;
                 this.description = null;
                 this.date = null;
@@ -56,12 +62,16 @@ export default {
                     params: { q: this.currentCity },
                 });
                 this.temperature = Math.round(response.data.main.temp);
+                this.temperatureMin = Math.round(response.data.main.temp_min);
+                this.temperatureMax = Math.round(response.data.main.temp_max);
                 this.humidity = response.data.main.humidity;
                 this.description = response.data.weather[0].description;
                 this.date = new Date(response.data.dt * 1000);
                 this.icon = response.data.weather[0].icon;
             } catch (error) {
                 this.temperature = null;
+                this.temperatureMin = null;
+                this.temperatureMax = null;
                 this.humidity = null;
                 this.description = null;
                 this.date = null;

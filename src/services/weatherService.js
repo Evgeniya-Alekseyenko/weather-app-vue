@@ -6,14 +6,27 @@ export async function updateWeather(city) {
         const response = await weatherApi.get('weather', {
             params: { q: city },
         });
+        console.log(response);
         const temperature = Math.round(response.data.main.temp);
+        const temperatureMin = Math.round(response.data.main.temp_min);
+        const temperatureMax = Math.round(response.data.main.temp_max);
         const humidity = response.data.main.humidity;
         const description = response.data.weather[0].description;
         const icon = response.data.weather[0].icon;
         const date = response.data.dt
             ? new Date(response.data.dt * 1000)
             : null;
-        return { temperature, humidity, description, icon, date };
+        console.log(response);
+
+        return {
+            temperature,
+            temperatureMin,
+            temperatureMax,
+            humidity,
+            description,
+            icon,
+            date,
+        };
     } catch (error) {
         if (error.response && error.response.status === 404) {
             console.error('City not found:', city);
@@ -25,7 +38,7 @@ export async function updateWeather(city) {
     }
 }
 
-export async function updateForecast(city) {
+export async function updateForecast(city, currentWeatherData) {
     try {
         if (!city) {
             return [];
@@ -51,7 +64,15 @@ export async function updateForecast(city) {
                 temperature: Math.round(forecast.main.temp),
                 humidity: forecast.main.humidity,
                 description: forecast.weather[0].description,
+                icon: forecast.weather[0].icon,
             };
+        });
+        weeklyForecast.unshift({
+            date: formatDate(currentWeatherData.date),
+            temperature: currentWeatherData.temperature,
+            humidity: currentWeatherData.humidity,
+            description: currentWeatherData.description,
+            icon: currentWeatherData.icon,
         });
 
         return weeklyForecast;
@@ -81,7 +102,17 @@ function formatDate(date) {
         'November',
         'December',
     ];
+    const days = [
+        'Sunday',
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+        'Saturday',
+    ];
     const month = months[date.getMonth()];
     const dayOfMonth = date.getDate();
-    return `${month} ${dayOfMonth}`;
+    const dayOfWeek = days[date.getDay()];
+    return `${dayOfWeek}, ${month} ${dayOfMonth} `;
 }
